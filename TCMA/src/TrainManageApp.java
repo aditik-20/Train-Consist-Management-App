@@ -1,15 +1,26 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
-public class TrainManageApp {
-
+public class TrainManageApp    {
     public static void main(String[] args) {
 
         System.out.println("=== Train Consist Management App ===");
 
-        List<String> trainConsist = new ArrayList<>();
+        LinkedList<String> trainConsist = new LinkedList<>();
 
-        System.out.println("Train consist initialized.");
-        System.out.println("Initial number of bogies: " + trainConsist.size());
+        trainConsist.addLast("Engine");
+        trainConsist.addLast("Sleeper");
+        trainConsist.addLast("AC");
+        trainConsist.addLast("Cargo");
+        trainConsist.addLast("Guard");
+
+        trainConsist.add(2, "Pantry");
+
+        trainConsist.removeFirst();
+        trainConsist.removeLast();
+
+        System.out.println("Final Train Consist:");
+        for (String bogie : trainConsist) {
+            System.out.println(bogie);
+        }
     }
 }
