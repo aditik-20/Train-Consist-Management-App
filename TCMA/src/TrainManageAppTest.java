@@ -1,87 +1,55 @@
 import org.junit.Test;
-import java.util.*;
 import static org.junit.Assert.*;
 
 public class TrainManageAppTest {
 
-    private List<Bogie> getBogies() {
-        List<Bogie> list = new ArrayList<>();
-        list.add(new Bogie("Sleeper", 72));
-        list.add(new Bogie("AC Chair", 56));
-        list.add(new Bogie("First Class", 24));
-        list.add(new Bogie("Sleeper", 70));
-        return list;
+    @Test
+    public void testException_ValidCapacityCreation() throws Exception {
+        TrainManageApp.PassengerBogie bogie =
+                new TrainManageApp.PassengerBogie("Sleeper", 50);
+
+        assertEquals("Sleeper", bogie.getType());
+        assertEquals(50, bogie.getCapacity());
+    }
+
+    @Test(expected = TrainManageApp.InvalidCapacityException.class)
+    public void testException_NegativeCapacityThrowsException() throws Exception {
+        new TrainManageApp.PassengerBogie("AC", -10);
+    }
+
+    @Test(expected = TrainManageApp.InvalidCapacityException.class)
+    public void testException_ZeroCapacityThrowsException() throws Exception {
+        new TrainManageApp.PassengerBogie("FirstClass", 0);
     }
 
     @Test
-    public void testReduce_TotalSeatCalculation() {
-        int total = getBogies().stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
-
-        assertEquals(222, total);
+    public void testException_ExceptionMessageValidation() {
+        try {
+            new TrainManageApp.PassengerBogie("Sleeper", 0);
+            fail("Exception not thrown");
+        } catch (TrainManageApp.InvalidCapacityException e) {
+            assertEquals("Capacity must be greater than zero", e.getMessage());
+        }
     }
 
     @Test
-    public void testReduce_MultipleBogiesAggregation() {
-        int total = getBogies().stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
+    public void testException_ObjectIntegrityAfterCreation() throws Exception {
+        TrainManageApp.PassengerBogie bogie =
+                new TrainManageApp.PassengerBogie("AC Chair", 60);
 
-        assertTrue(total > 0);
+        assertEquals("AC Chair", bogie.getType());
+        assertEquals(60, bogie.getCapacity());
     }
 
     @Test
-    public void testReduce_SingleBogieCapacity() {
-        List<Bogie> list = Arrays.asList(new Bogie("Sleeper", 72));
+    public void testException_MultipleValidBogiesCreation() throws Exception {
+        TrainManageApp.PassengerBogie b1 =
+                new TrainManageApp.PassengerBogie("Sleeper", 72);
 
-        int total = list.stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
+        TrainManageApp.PassengerBogie b2 =
+                new TrainManageApp.PassengerBogie("AC", 50);
 
-        assertEquals(72, total);
-    }
-
-    @Test
-    public void testReduce_EmptyBogieList() {
-        List<Bogie> list = new ArrayList<>();
-
-        int total = list.stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
-
-        assertEquals(0, total);
-    }
-
-    @Test
-    public void testReduce_CorrectCapacityExtraction() {
-        List<Bogie> list = getBogies();
-
-        List<Integer> capacities = list.stream()
-                .map(b -> b.capacity)
-                .toList();
-
-        assertTrue(capacities.contains(72));
-        assertTrue(capacities.contains(56));
-    }
-
-    @Test
-    public void testReduce_AllBogiesIncluded() {
-        int total = getBogies().stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
-
-        assertEquals(222, total);
-    }
-
-    @Test
-    public void testReduce_OriginalListUnchanged() {
-        List<Bogie> original = getBogies();
-
-        int total = original.stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
-
-        assertEquals(4, original.size());
+        assertNotNull(b1);
+        assertNotNull(b2);
     }
 }

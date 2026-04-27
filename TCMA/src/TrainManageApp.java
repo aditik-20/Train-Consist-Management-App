@@ -1,31 +1,45 @@
-import java.util.*;
-
 public class TrainManageApp {
 
-    public static void main(String[] args) {
+    // Custom Exception
+    static class InvalidCapacityException extends Exception {
+        public InvalidCapacityException(String message) {
+            super(message);
+        }
+    }
 
-        System.out.println("===========================================");
-        System.out.println(" UC10 - Count Total Seats in Train");
-        System.out.println("===========================================\n");
+    // Passenger Bogie Class
+    static class PassengerBogie {
+        private String type;
+        private int capacity;
 
-        List<Bogie> bogies = new ArrayList<>();
-
-        bogies.add(new Bogie("Sleeper", 72));
-        bogies.add(new Bogie("AC Chair", 56));
-        bogies.add(new Bogie("First Class", 24));
-        bogies.add(new Bogie("Sleeper", 70));
-
-        System.out.println("Bogies in Train:");
-        for (Bogie b : bogies) {
-            System.out.println(b.name + " -> " + b.capacity);
+        public PassengerBogie(String type, int capacity) throws InvalidCapacityException {
+            if (capacity <= 0) {
+                throw new InvalidCapacityException("Capacity must be greater than zero");
+            }
+            this.type = type;
+            this.capacity = capacity;
         }
 
-        int total = bogies.stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
+        public String getType() {
+            return type;
+        }
 
-        System.out.println("\nTotal Seating Capacity of Train: " + total);
+        public int getCapacity() {
+            return capacity;
+        }
+    }
 
-        System.out.println("\nUC10 aggregation completed...");
+    // Main Method
+    public static void main(String[] args) {
+        try {
+            PassengerBogie b1 = new PassengerBogie("Sleeper", 72);
+            System.out.println(b1.getType() + " - " + b1.getCapacity());
+
+            PassengerBogie b2 = new PassengerBogie("AC Chair", 0); // will throw exception
+            System.out.println(b2.getType() + " - " + b2.getCapacity());
+
+        } catch (InvalidCapacityException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
