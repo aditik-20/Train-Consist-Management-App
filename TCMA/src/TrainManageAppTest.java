@@ -1,62 +1,84 @@
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class TrainManageAppTest {
 
-    static class GoodsBogie {
-        String type;
-        String cargo;
+    @Test
+    void testLoopFilteringLogic() {
+        List<TrainManageApp.Bogie> bogies = new ArrayList<>();
+        bogies.add(new TrainManageApp.Bogie("Sleeper", 50));
+        bogies.add(new TrainManageApp.Bogie("AC Chair", 80));
 
-        GoodsBogie(String type, String cargo) {
-            this.type = type;
-            this.cargo = cargo;
-        }
+        List<TrainManageApp.Bogie> result =
+                TrainManageApp.filterWithLoop(bogies);
 
-        @Override
-        public String toString() {
-            return type + " -> " + cargo;
-        }
+        assertEquals(1, result.size());
+        assertEquals(80, result.get(0).capacity);
     }
 
-    public static boolean isTrainSafe(List<GoodsBogie> goodsBogies) {
-        return goodsBogies.stream()
-                .allMatch(bogie -> {
-                    if (bogie.type.equalsIgnoreCase("Cylindrical")) {
-                        return bogie.cargo.equalsIgnoreCase("Petroleum");
-                    }
-                    return true;
-                });
+    @Test
+    void testStreamFilteringLogic() {
+        List<TrainManageApp.Bogie> bogies = new ArrayList<>();
+        bogies.add(new TrainManageApp.Bogie("Sleeper", 40));
+        bogies.add(new TrainManageApp.Bogie("First Class", 100));
+
+        List<TrainManageApp.Bogie> result =
+                TrainManageApp.filterWithStream(bogies);
+
+        assertEquals(1, result.size());
+        assertEquals(100, result.get(0).capacity);
     }
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        List<GoodsBogie> goodsBogies = new ArrayList<>();
+    @Test
+    void testLoopAndStreamResultsMatch() {
+        List<TrainManageApp.Bogie> bogies = new ArrayList<>();
 
-        System.out.println("UC12 - Safety Compliance Check for Goods Bogies");
-        System.out.print("How many bogies do you want to enter? ");
-        int count = Integer.parseInt(scanner.nextLine());
-
-        for (int i = 0; i < count; i++) {
-            System.out.print("Enter bogie type (e.g., Cylindrical, Open, Box): ");
-            String type = scanner.nextLine();
-            System.out.print("Enter cargo (e.g., Petroleum, Coal, Grain): ");
-            String cargo = scanner.nextLine();
-            goodsBogies.add(new GoodsBogie(type, cargo));
+        for (int i = 0; i < 10; i++) {
+            bogies.add(new TrainManageApp.Bogie("Bogie-" + i, i * 10));
         }
 
-        System.out.println("\nGoods Bogies in Train:");
-        goodsBogies.forEach(System.out::println);
+        List<TrainManageApp.Bogie> loopResult =
+                TrainManageApp.filterWithLoop(bogies);
 
-        boolean isSafe = isTrainSafe(goodsBogies);
-        System.out.println("\nSafety Compliance Status: " + isSafe);
-        if (isSafe) {
-            System.out.println("Train formation is SAFE.");
-        } else {
-            System.out.println("Train formation is NOT SAFE.");
+        List<TrainManageApp.Bogie> streamResult =
+                TrainManageApp.filterWithStream(bogies);
+
+        assertEquals(loopResult.size(), streamResult.size());
+        assertIterableEquals(loopResult, streamResult);
+    }
+
+    @Test
+    void testExecutionTimeMeasurement() {
+        List<TrainManageApp.Bogie> bogies = new ArrayList<>();
+
+        for (int i = 0; i < 1000; i++) {
+            bogies.add(new TrainManageApp.Bogie("Bogie-" + i, i % 100));
         }
 
-        System.out.println("\nUC12 safety validation completed ...");
-        scanner.close();
+        long start = System.nanoTime();
+        TrainManageApp.filterWithLoop(bogies);
+        long end = System.nanoTime();
+
+        long elapsed = end - start;
+        assertTrue(elapsed > 0);
+    }
+
+    @Test
+    void testLargeDatasetProcessing() {
+        List<TrainManageApp.Bogie> bogies = new ArrayList<>();
+
+        for (int i = 0; i < 100000; i++) {
+            bogies.add(new TrainManageApp.Bogie("Bogie-" + i, (i % 100) + 1));
+        }
+
+        List<TrainManageApp.Bogie> loopResult =
+                TrainManageApp.filterWithLoop(bogies);
+
+        List<TrainManageApp.Bogie> streamResult =
+                TrainManageApp.filterWithStream(bogies);
+
+        assertEquals(loopResult.size(), streamResult.size());
     }
 }
