@@ -5,42 +5,57 @@ import java.util.Arrays;
 public class TrainManageAppTest {
 
     @Test
-    public void testSort_BasicSorting() {
-        int[] arr = {72, 56, 24, 70, 60};
-        TrainManageApp.sortCapacities(arr);
+    public void testSort_BasicAlphabeticalSorting() {
+        String[] arr = {"Sleeper","AC Chair","First Class","General","Luxury"};
+        TrainManageApp.sortBogieNames(arr);
 
-        assertArrayEquals(new int[]{24, 56, 60, 70, 72}, arr);
+        assertArrayEquals(
+                new String[]{"AC Chair","First Class","General","Luxury","Sleeper"},
+                arr
+        );
+    }
+
+    @Test
+    public void testSort_UnsortedInput() {
+        String[] arr = {"Luxury","General","Sleeper","AC Chair"};
+        TrainManageApp.sortBogieNames(arr);
+
+        assertArrayEquals(
+                new String[]{"AC Chair","General","Luxury","Sleeper"},
+                arr
+        );
     }
 
     @Test
     public void testSort_AlreadySortedArray() {
-        int[] arr = {24, 56, 60, 70, 72};
-        TrainManageApp.sortCapacities(arr);
+        String[] arr = {"AC Chair","First Class","General"};
+        TrainManageApp.sortBogieNames(arr);
 
-        assertArrayEquals(new int[]{24, 56, 60, 70, 72}, arr);
+        assertArrayEquals(
+                new String[]{"AC Chair","First Class","General"},
+                arr
+        );
     }
 
     @Test
-    public void testSort_DuplicateValues() {
-        int[] arr = {72, 56, 56, 24};
-        TrainManageApp.sortCapacities(arr);
+    public void testSort_DuplicateBogieNames() {
+        String[] arr = {"Sleeper","AC Chair","Sleeper","General"};
+        TrainManageApp.sortBogieNames(arr);
 
-        assertArrayEquals(new int[]{24, 56, 56, 72}, arr);
+        assertArrayEquals(
+                new String[]{"AC Chair","General","Sleeper","Sleeper"},
+                arr
+        );
     }
 
     @Test
     public void testSort_SingleElementArray() {
-        int[] arr = {50};
-        TrainManageApp.sortCapacities(arr);
+        String[] arr = {"Sleeper"};
+        TrainManageApp.sortBogieNames(arr);
 
-        assertArrayEquals(new int[]{50}, arr);
-    }
-
-    @Test
-    public void testSort_AllEqualValues() {
-        int[] arr = {40, 40, 40};
-        TrainManageApp.sortCapacities(arr);
-
-        assertArrayEquals(new int[]{40, 40, 40}, arr);
+        assertArrayEquals(
+                new String[]{"Sleeper"},
+                arr
+        );
     }
 }
