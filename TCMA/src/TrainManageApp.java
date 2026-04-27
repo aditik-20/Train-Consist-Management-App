@@ -1,61 +1,42 @@
 public class TrainManageApp {
 
-    // Custom Runtime Exception
-    static class CargoSafetyException extends RuntimeException {
-        public CargoSafetyException(String message) {
-            super(message);
+    // Bubble Sort Method
+    public static void sortCapacities(int[] arr) {
+        int n = arr.length;
+
+        for (int i = 0; i < n - 1; i++) {
+            // Each pass
+            for (int j = 0; j < n - i - 1; j++) {
+                // Compare adjacent elements
+                if (arr[j] > arr[j + 1]) {
+                    // Swap
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
         }
     }
 
-    // Goods Bogie Class
-    static class GoodsBogie {
-        private String shape;
-        private String cargo;
-
-        public GoodsBogie(String shape) {
-            this.shape = shape;
+    // Utility method to print array
+    public static void display(int[] arr) {
+        for (int val : arr) {
+            System.out.print(val + " ");
         }
-
-        public void assignCargo(String cargo) {
-            try {
-                // Safety validation
-                if (shape.equalsIgnoreCase("Rectangular") &&
-                        cargo.equalsIgnoreCase("Petroleum")) {
-                    throw new CargoSafetyException("Unsafe cargo assignment: Petroleum cannot be loaded in Rectangular bogie");
-                }
-
-                this.cargo = cargo;
-                System.out.println("Cargo assigned: " + cargo);
-
-            } catch (CargoSafetyException e) {
-                System.out.println("Error: " + e.getMessage());
-
-            } finally {
-                System.out.println("Cargo assignment attempt completed.");
-            }
-        }
-
-        public String getCargo() {
-            return cargo;
-        }
-
-        public String getShape() {
-            return shape;
-        }
+        System.out.println();
     }
 
     // Main Method
     public static void main(String[] args) {
 
-        GoodsBogie b1 = new GoodsBogie("Cylindrical");
-        b1.assignCargo("Petroleum"); // Safe
+        int[] capacities = {72, 56, 24, 70, 60};
 
-        GoodsBogie b2 = new GoodsBogie("Rectangular");
-        b2.assignCargo("Petroleum"); // Unsafe
+        System.out.print("Before Sorting: ");
+        display(capacities);
 
-        GoodsBogie b3 = new GoodsBogie("Rectangular");
-        b3.assignCargo("Coal"); // Safe
+        sortCapacities(capacities);
 
-        System.out.println("Program continues after handling exceptions.");
+        System.out.print("After Sorting: ");
+        display(capacities);
     }
 }
