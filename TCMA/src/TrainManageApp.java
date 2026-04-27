@@ -1,47 +1,39 @@
-import java.util.Arrays;
-
 public class TrainManageApp {
 
-    // Binary Search method
-    public static boolean binarySearch(String[] arr, String key) {
+    // Search method with state validation
+    public static boolean searchBogie(String[] bogies, String key) {
 
-        int low = 0;
-        int high = arr.length - 1;
+        // Fail-fast check
+        if (bogies == null || bogies.length == 0) {
+            throw new IllegalStateException("Train consist is empty. Cannot perform search operation.");
+        }
 
-        while (low <= high) {
-
-            int mid = (low + high) / 2;
-
-            int result = arr[mid].compareTo(key);
-
-            if (result == 0) {
-                return true; // found
-            } else if (result < 0) {
-                low = mid + 1; // search right half
-            } else {
-                high = mid - 1; // search left half
+        // Linear search
+        for (int i = 0; i < bogies.length; i++) {
+            if (bogies[i].equals(key)) {
+                return true;
             }
         }
 
-        return false; // not found
+        return false;
     }
 
     // Main method
     public static void main(String[] args) {
 
-        String[] bogieIds = {"BG101", "BG205", "BG309", "BG412", "BG550"};
+        String[] bogieIds = {}; // empty case to trigger exception
 
-        // Ensure sorted (precondition)
-        Arrays.sort(bogieIds);
+        try {
+            boolean found = searchBogie(bogieIds, "BG101");
 
-        String searchKey = "BG309";
+            if (found) {
+                System.out.println("Bogie FOUND");
+            } else {
+                System.out.println("Bogie NOT FOUND");
+            }
 
-        boolean found = binarySearch(bogieIds, searchKey);
-
-        if (found) {
-            System.out.println(searchKey + " FOUND in train consist.");
-        } else {
-            System.out.println(searchKey + " NOT FOUND in train consist.");
+        } catch (IllegalStateException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 }
