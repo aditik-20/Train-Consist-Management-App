@@ -1,61 +1,40 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
-import java.util.Arrays;
 
 public class TrainManageAppTest {
 
     @Test
-    public void testSort_BasicAlphabeticalSorting() {
-        String[] arr = {"Sleeper","AC Chair","First Class","General","Luxury"};
-        TrainManageApp.sortBogieNames(arr);
+    public void testSearch_BogieFound() {
+        String[] arr = {"BG101","BG205","BG309","BG412","BG550"};
 
-        assertArrayEquals(
-                new String[]{"AC Chair","First Class","General","Luxury","Sleeper"},
-                arr
-        );
+        assertTrue(TrainManageApp.searchBogie(arr, "BG309"));
     }
 
     @Test
-    public void testSort_UnsortedInput() {
-        String[] arr = {"Luxury","General","Sleeper","AC Chair"};
-        TrainManageApp.sortBogieNames(arr);
+    public void testSearch_BogieNotFound() {
+        String[] arr = {"BG101","BG205","BG309","BG412","BG550"};
 
-        assertArrayEquals(
-                new String[]{"AC Chair","General","Luxury","Sleeper"},
-                arr
-        );
+        assertFalse(TrainManageApp.searchBogie(arr, "BG999"));
     }
 
     @Test
-    public void testSort_AlreadySortedArray() {
-        String[] arr = {"AC Chair","First Class","General"};
-        TrainManageApp.sortBogieNames(arr);
+    public void testSearch_FirstElementMatch() {
+        String[] arr = {"BG101","BG205","BG309","BG412","BG550"};
 
-        assertArrayEquals(
-                new String[]{"AC Chair","First Class","General"},
-                arr
-        );
+        assertTrue(TrainManageApp.searchBogie(arr, "BG101"));
     }
 
     @Test
-    public void testSort_DuplicateBogieNames() {
-        String[] arr = {"Sleeper","AC Chair","Sleeper","General"};
-        TrainManageApp.sortBogieNames(arr);
+    public void testSearch_LastElementMatch() {
+        String[] arr = {"BG101","BG205","BG309","BG412","BG550"};
 
-        assertArrayEquals(
-                new String[]{"AC Chair","General","Sleeper","Sleeper"},
-                arr
-        );
+        assertTrue(TrainManageApp.searchBogie(arr, "BG550"));
     }
 
     @Test
-    public void testSort_SingleElementArray() {
-        String[] arr = {"Sleeper"};
-        TrainManageApp.sortBogieNames(arr);
+    public void testSearch_SingleElementArray() {
+        String[] arr = {"BG101"};
 
-        assertArrayEquals(
-                new String[]{"Sleeper"},
-                arr
-        );
+        assertTrue(TrainManageApp.searchBogie(arr, "BG101"));
     }
 }
