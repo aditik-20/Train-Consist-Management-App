@@ -1,31 +1,62 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class TrainManageApp {
 
-    public static void main(String[] args) {
+    static class GoodsBogie {
+        String type;
+        String cargo;
 
-        System.out.println("===========================================");
-        System.out.println(" UC10 - Count Total Seats in Train");
-        System.out.println("===========================================\n");
-
-        List<Bogie> bogies = new ArrayList<>();
-
-        bogies.add(new Bogie("Sleeper", 72));
-        bogies.add(new Bogie("AC Chair", 56));
-        bogies.add(new Bogie("First Class", 24));
-        bogies.add(new Bogie("Sleeper", 70));
-
-        System.out.println("Bogies in Train:");
-        for (Bogie b : bogies) {
-            System.out.println(b.name + " -> " + b.capacity);
+        GoodsBogie(String type, String cargo) {
+            this.type = type;
+            this.cargo = cargo;
         }
 
-        int total = bogies.stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
+        @Override
+        public String toString() {
+            return type + " -> " + cargo;
+        }
+    }
 
-        System.out.println("\nTotal Seating Capacity of Train: " + total);
+    public static boolean isTrainSafe(List<GoodsBogie> goodsBogies) {
+        return goodsBogies.stream()
+                .allMatch(bogie -> {
+                    if (bogie.type.equalsIgnoreCase("Cylindrical")) {
+                        return bogie.cargo.equalsIgnoreCase("Petroleum");
+                    }
+                    return true;
+                });
+    }
 
-        System.out.println("\nUC10 aggregation completed...");
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        List<GoodsBogie> goodsBogies = new ArrayList<>();
+
+        System.out.println("UC12 - Safety Compliance Check for Goods Bogies");
+        System.out.print("How many bogies do you want to enter? ");
+        int count = Integer.parseInt(scanner.nextLine());
+
+        for (int i = 0; i < count; i++) {
+            System.out.print("Enter bogie type (e.g., Cylindrical, Open, Box): ");
+            String type = scanner.nextLine();
+            System.out.print("Enter cargo (e.g., Petroleum, Coal, Grain): ");
+            String cargo = scanner.nextLine();
+            goodsBogies.add(new GoodsBogie(type, cargo));
+        }
+
+        System.out.println("\nGoods Bogies in Train:");
+        goodsBogies.forEach(System.out::println);
+
+        boolean isSafe = isTrainSafe(goodsBogies);
+        System.out.println("\nSafety Compliance Status: " + isSafe);
+        if (isSafe) {
+            System.out.println("Train formation is SAFE.");
+        } else {
+            System.out.println("Train formation is NOT SAFE.");
+        }
+
+        System.out.println("\nUC12 safety validation completed ...");
+        scanner.close();
     }
 }

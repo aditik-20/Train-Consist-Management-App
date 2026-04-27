@@ -1,87 +1,62 @@
-import org.junit.Test;
-import java.util.*;
-import static org.junit.Assert.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class TrainManageAppTest {
 
-    private List<Bogie> getBogies() {
-        List<Bogie> list = new ArrayList<>();
-        list.add(new Bogie("Sleeper", 72));
-        list.add(new Bogie("AC Chair", 56));
-        list.add(new Bogie("First Class", 24));
-        list.add(new Bogie("Sleeper", 70));
-        return list;
+    static class GoodsBogie {
+        String type;
+        String cargo;
+
+        GoodsBogie(String type, String cargo) {
+            this.type = type;
+            this.cargo = cargo;
+        }
+
+        @Override
+        public String toString() {
+            return type + " -> " + cargo;
+        }
     }
 
-    @Test
-    public void testReduce_TotalSeatCalculation() {
-        int total = getBogies().stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
-
-        assertEquals(222, total);
+    public static boolean isTrainSafe(List<GoodsBogie> goodsBogies) {
+        return goodsBogies.stream()
+                .allMatch(bogie -> {
+                    if (bogie.type.equalsIgnoreCase("Cylindrical")) {
+                        return bogie.cargo.equalsIgnoreCase("Petroleum");
+                    }
+                    return true;
+                });
     }
 
-    @Test
-    public void testReduce_MultipleBogiesAggregation() {
-        int total = getBogies().stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        List<GoodsBogie> goodsBogies = new ArrayList<>();
 
-        assertTrue(total > 0);
-    }
+        System.out.println("UC12 - Safety Compliance Check for Goods Bogies");
+        System.out.print("How many bogies do you want to enter? ");
+        int count = Integer.parseInt(scanner.nextLine());
 
-    @Test
-    public void testReduce_SingleBogieCapacity() {
-        List<Bogie> list = Arrays.asList(new Bogie("Sleeper", 72));
+        for (int i = 0; i < count; i++) {
+            System.out.print("Enter bogie type (e.g., Cylindrical, Open, Box): ");
+            String type = scanner.nextLine();
+            System.out.print("Enter cargo (e.g., Petroleum, Coal, Grain): ");
+            String cargo = scanner.nextLine();
+            goodsBogies.add(new GoodsBogie(type, cargo));
+        }
 
-        int total = list.stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
+        System.out.println("\nGoods Bogies in Train:");
+        goodsBogies.forEach(System.out::println);
 
-        assertEquals(72, total);
-    }
+        boolean isSafe = isTrainSafe(goodsBogies);
+        System.out.println("\nSafety Compliance Status: " + isSafe);
+        if (isSafe) {
+            System.out.println("Train formation is SAFE.");
+        } else {
+            System.out.println("Train formation is NOT SAFE.");
+        }
 
-    @Test
-    public void testReduce_EmptyBogieList() {
-        List<Bogie> list = new ArrayList<>();
-
-        int total = list.stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
-
-        assertEquals(0, total);
-    }
-
-    @Test
-    public void testReduce_CorrectCapacityExtraction() {
-        List<Bogie> list = getBogies();
-
-        List<Integer> capacities = list.stream()
-                .map(b -> b.capacity)
-                .toList();
-
-        assertTrue(capacities.contains(72));
-        assertTrue(capacities.contains(56));
-    }
-
-    @Test
-    public void testReduce_AllBogiesIncluded() {
-        int total = getBogies().stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
-
-        assertEquals(222, total);
-    }
-
-    @Test
-    public void testReduce_OriginalListUnchanged() {
-        List<Bogie> original = getBogies();
-
-        int total = original.stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
-
-        assertEquals(4, original.size());
+        System.out.println("\nUC12 safety validation completed ...");
+        scanner.close();
     }
 }
