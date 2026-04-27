@@ -1,47 +1,43 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
-
 public class TrainManageAppTest {
+
+    @Test(expected = IllegalStateException.class)
+    public void testSearch_EmptyTrainThrowsException() {
+        String[] arr = {};
+        TrainManageApp.searchBogie(arr, "BG101");
+    }
 
     @Test
     public void testSearch_BogieFound() {
-        String[] arr = {"BG101","BG205","BG309","BG412","BG550"};
-        Arrays.sort(arr);
+        String[] arr = {"BG101","BG205","BG309"};
 
-        assertTrue(TrainManageApp.binarySearch(arr, "BG309"));
+        assertTrue(TrainManageApp.searchBogie(arr, "BG205"));
     }
 
     @Test
     public void testSearch_BogieNotFound() {
-        String[] arr = {"BG101","BG205","BG309","BG412","BG550"};
-        Arrays.sort(arr);
+        String[] arr = {"BG101","BG205","BG309"};
 
-        assertFalse(TrainManageApp.binarySearch(arr, "BG999"));
-    }
-
-    @Test
-    public void testSearch_FirstElementMatch() {
-        String[] arr = {"BG101","BG205","BG309","BG412","BG550"};
-        Arrays.sort(arr);
-
-        assertTrue(TrainManageApp.binarySearch(arr, "BG101"));
-    }
-
-    @Test
-    public void testSearch_LastElementMatch() {
-        String[] arr = {"BG101","BG205","BG309","BG412","BG550"};
-        Arrays.sort(arr);
-
-        assertTrue(TrainManageApp.binarySearch(arr, "BG550"));
+        assertFalse(TrainManageApp.searchBogie(arr, "BG999"));
     }
 
     @Test
     public void testSearch_SingleElementArray() {
         String[] arr = {"BG101"};
-        Arrays.sort(arr);
 
-        assertTrue(TrainManageApp.binarySearch(arr, "BG101"));
+        assertTrue(TrainManageApp.searchBogie(arr, "BG101"));
+    }
+
+    @Test
+    public void testSearch_ExceptionMessageValidation() {
+        try {
+            String[] arr = {};
+            TrainManageApp.searchBogie(arr, "BG101");
+            fail("Exception not thrown");
+        } catch (IllegalStateException e) {
+            assertEquals("Train consist is empty. Cannot perform search operation.", e.getMessage());
+        }
     }
 }
