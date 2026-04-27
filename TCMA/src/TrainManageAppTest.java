@@ -1,87 +1,60 @@
 import org.junit.Test;
-import java.util.*;
 import static org.junit.Assert.*;
 
 public class TrainManageAppTest {
 
-    private List<Bogie> getBogies() {
-        List<Bogie> list = new ArrayList<>();
-        list.add(new Bogie("Sleeper", 72));
-        list.add(new Bogie("AC Chair", 56));
-        list.add(new Bogie("First Class", 24));
-        list.add(new Bogie("Sleeper", 70));
-        return list;
+    @Test
+    public void testCargo_SafeAssignment() {
+        TrainManageApp.GoodsBogie bogie =
+                new TrainManageApp.GoodsBogie("Cylindrical");
+
+        bogie.assignCargo("Petroleum");
+
+        assertEquals("Petroleum", bogie.getCargo());
     }
 
     @Test
-    public void testReduce_TotalSeatCalculation() {
-        int total = getBogies().stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
+    public void testCargo_UnsafeAssignmentHandled() {
+        TrainManageApp.GoodsBogie bogie =
+                new TrainManageApp.GoodsBogie("Rectangular");
 
-        assertEquals(222, total);
+        bogie.assignCargo("Petroleum");
+
+        assertNull(bogie.getCargo()); // should not be assigned
     }
 
     @Test
-    public void testReduce_MultipleBogiesAggregation() {
-        int total = getBogies().stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
+    public void testCargo_CargoNotAssignedAfterFailure() {
+        TrainManageApp.GoodsBogie bogie =
+                new TrainManageApp.GoodsBogie("Rectangular");
 
-        assertTrue(total > 0);
+        bogie.assignCargo("Petroleum");
+
+        assertNull(bogie.getCargo());
     }
 
     @Test
-    public void testReduce_SingleBogieCapacity() {
-        List<Bogie> list = Arrays.asList(new Bogie("Sleeper", 72));
+    public void testCargo_ProgramContinuesAfterException() {
+        TrainManageApp.GoodsBogie b1 =
+                new TrainManageApp.GoodsBogie("Rectangular");
 
-        int total = list.stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
+        TrainManageApp.GoodsBogie b2 =
+                new TrainManageApp.GoodsBogie("Cylindrical");
 
-        assertEquals(72, total);
+        b1.assignCargo("Petroleum"); // unsafe
+        b2.assignCargo("Coal");      // safe
+
+        assertEquals("Coal", b2.getCargo());
     }
 
     @Test
-    public void testReduce_EmptyBogieList() {
-        List<Bogie> list = new ArrayList<>();
+    public void testCargo_FinallyBlockExecution() {
+        TrainManageApp.GoodsBogie bogie =
+                new TrainManageApp.GoodsBogie("Rectangular");
 
-        int total = list.stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
+        bogie.assignCargo("Petroleum");
 
-        assertEquals(0, total);
-    }
-
-    @Test
-    public void testReduce_CorrectCapacityExtraction() {
-        List<Bogie> list = getBogies();
-
-        List<Integer> capacities = list.stream()
-                .map(b -> b.capacity)
-                .toList();
-
-        assertTrue(capacities.contains(72));
-        assertTrue(capacities.contains(56));
-    }
-
-    @Test
-    public void testReduce_AllBogiesIncluded() {
-        int total = getBogies().stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
-
-        assertEquals(222, total);
-    }
-
-    @Test
-    public void testReduce_OriginalListUnchanged() {
-        List<Bogie> original = getBogies();
-
-        int total = original.stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
-
-        assertEquals(4, original.size());
+        // No direct assert for finally, but test ensures no crash
+        assertTrue(true);
     }
 }

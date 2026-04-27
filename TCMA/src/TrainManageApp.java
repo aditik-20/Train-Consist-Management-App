@@ -1,31 +1,61 @@
-import java.util.*;
-
 public class TrainManageApp {
 
-    public static void main(String[] args) {
+    // Custom Runtime Exception
+    static class CargoSafetyException extends RuntimeException {
+        public CargoSafetyException(String message) {
+            super(message);
+        }
+    }
 
-        System.out.println("===========================================");
-        System.out.println(" UC10 - Count Total Seats in Train");
-        System.out.println("===========================================\n");
+    // Goods Bogie Class
+    static class GoodsBogie {
+        private String shape;
+        private String cargo;
 
-        List<Bogie> bogies = new ArrayList<>();
-
-        bogies.add(new Bogie("Sleeper", 72));
-        bogies.add(new Bogie("AC Chair", 56));
-        bogies.add(new Bogie("First Class", 24));
-        bogies.add(new Bogie("Sleeper", 70));
-
-        System.out.println("Bogies in Train:");
-        for (Bogie b : bogies) {
-            System.out.println(b.name + " -> " + b.capacity);
+        public GoodsBogie(String shape) {
+            this.shape = shape;
         }
 
-        int total = bogies.stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
+        public void assignCargo(String cargo) {
+            try {
+                // Safety validation
+                if (shape.equalsIgnoreCase("Rectangular") &&
+                        cargo.equalsIgnoreCase("Petroleum")) {
+                    throw new CargoSafetyException("Unsafe cargo assignment: Petroleum cannot be loaded in Rectangular bogie");
+                }
 
-        System.out.println("\nTotal Seating Capacity of Train: " + total);
+                this.cargo = cargo;
+                System.out.println("Cargo assigned: " + cargo);
 
-        System.out.println("\nUC10 aggregation completed...");
+            } catch (CargoSafetyException e) {
+                System.out.println("Error: " + e.getMessage());
+
+            } finally {
+                System.out.println("Cargo assignment attempt completed.");
+            }
+        }
+
+        public String getCargo() {
+            return cargo;
+        }
+
+        public String getShape() {
+            return shape;
+        }
+    }
+
+    // Main Method
+    public static void main(String[] args) {
+
+        GoodsBogie b1 = new GoodsBogie("Cylindrical");
+        b1.assignCargo("Petroleum"); // Safe
+
+        GoodsBogie b2 = new GoodsBogie("Rectangular");
+        b2.assignCargo("Petroleum"); // Unsafe
+
+        GoodsBogie b3 = new GoodsBogie("Rectangular");
+        b3.assignCargo("Coal"); // Safe
+
+        System.out.println("Program continues after handling exceptions.");
     }
 }
