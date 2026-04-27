@@ -1,60 +1,46 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
+import java.util.Arrays;
 
 public class TrainManageAppTest {
 
     @Test
-    public void testCargo_SafeAssignment() {
-        TrainManageApp.GoodsBogie bogie =
-                new TrainManageApp.GoodsBogie("Cylindrical");
+    public void testSort_BasicSorting() {
+        int[] arr = {72, 56, 24, 70, 60};
+        TrainManageApp.sortCapacities(arr);
 
-        bogie.assignCargo("Petroleum");
-
-        assertEquals("Petroleum", bogie.getCargo());
+        assertArrayEquals(new int[]{24, 56, 60, 70, 72}, arr);
     }
 
     @Test
-    public void testCargo_UnsafeAssignmentHandled() {
-        TrainManageApp.GoodsBogie bogie =
-                new TrainManageApp.GoodsBogie("Rectangular");
+    public void testSort_AlreadySortedArray() {
+        int[] arr = {24, 56, 60, 70, 72};
+        TrainManageApp.sortCapacities(arr);
 
-        bogie.assignCargo("Petroleum");
-
-        assertNull(bogie.getCargo()); // should not be assigned
+        assertArrayEquals(new int[]{24, 56, 60, 70, 72}, arr);
     }
 
     @Test
-    public void testCargo_CargoNotAssignedAfterFailure() {
-        TrainManageApp.GoodsBogie bogie =
-                new TrainManageApp.GoodsBogie("Rectangular");
+    public void testSort_DuplicateValues() {
+        int[] arr = {72, 56, 56, 24};
+        TrainManageApp.sortCapacities(arr);
 
-        bogie.assignCargo("Petroleum");
-
-        assertNull(bogie.getCargo());
+        assertArrayEquals(new int[]{24, 56, 56, 72}, arr);
     }
 
     @Test
-    public void testCargo_ProgramContinuesAfterException() {
-        TrainManageApp.GoodsBogie b1 =
-                new TrainManageApp.GoodsBogie("Rectangular");
+    public void testSort_SingleElementArray() {
+        int[] arr = {50};
+        TrainManageApp.sortCapacities(arr);
 
-        TrainManageApp.GoodsBogie b2 =
-                new TrainManageApp.GoodsBogie("Cylindrical");
-
-        b1.assignCargo("Petroleum"); // unsafe
-        b2.assignCargo("Coal");      // safe
-
-        assertEquals("Coal", b2.getCargo());
+        assertArrayEquals(new int[]{50}, arr);
     }
 
     @Test
-    public void testCargo_FinallyBlockExecution() {
-        TrainManageApp.GoodsBogie bogie =
-                new TrainManageApp.GoodsBogie("Rectangular");
+    public void testSort_AllEqualValues() {
+        int[] arr = {40, 40, 40};
+        TrainManageApp.sortCapacities(arr);
 
-        bogie.assignCargo("Petroleum");
-
-        // No direct assert for finally, but test ensures no crash
-        assertTrue(true);
+        assertArrayEquals(new int[]{40, 40, 40}, arr);
     }
 }
